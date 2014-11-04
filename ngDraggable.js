@@ -10,7 +10,7 @@ angular.module("ngDraggable", [])
                 scope.value = attrs.ngDrag;
                 //  return;
                 var offset, _centerAnchor = false, _mx, _my, _tx, _ty, _mrx, _mry;
-                var startOffsetY, startMouseY;
+                var startOffsetY, startMouseY, offsetX;
                 var _hasTouch = ('ontouchstart' in document.documentElement);
                 var _pressEvents = 'touchstart mousedown';
                 var _moveEvents = 'touchmove mousemove';
@@ -110,8 +110,9 @@ angular.module("ngDraggable", [])
                         left: offset.left - parentPos.left
                     }
                     startOffsetY = childOffset.top;
+                    offsetX = childOffset.left;
 
-                    _tx = 0;
+                    _tx = offsetX;
                     _ty = childOffset.top;
 
                     moveElement(_tx, _ty);
@@ -133,7 +134,7 @@ angular.module("ngDraggable", [])
 
 
                     var yDiff = startMouseY - _my;
-                    _tx = 0;
+                    _tx = offsetX;
                     _ty = startOffsetY - yDiff;
 
                     moveElement(_tx, _ty);
