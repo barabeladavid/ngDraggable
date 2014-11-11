@@ -81,7 +81,14 @@ angular.module("ngDraggable", [])
                         $document.on(_releaseEvents, cancelPress);
                     } else {
 
-                        onlongpress(evt);
+                        cancelPress();
+                        _pressTimer = setTimeout(function () {
+                            cancelPress();
+                            onlongpress(evt);
+                        }, 200);
+                        $document.on(_moveEvents, cancelPress);
+                        $document.on(_releaseEvents, cancelPress);
+
 
                     }
 
@@ -98,6 +105,11 @@ angular.module("ngDraggable", [])
 
                     var table = document.getElementById('configuration-table');
                     offset = element.offset();
+
+                    var prevClonedItem = document.getElementById('cloned_item');
+                    if (document.getElementById('cloned_item')){
+                        prevClonedItem.remove();
+                    }
 
                     var item = element.clone().attr("id", "cloned_item").appendTo(table);
                     element = item;
@@ -147,16 +159,26 @@ angular.module("ngDraggable", [])
 
                 }
                 var onrelease = function (evt) {
+
+                    var prevClonedItem = document.getElementById('cloned_item');
+                    if (document.getElementById('cloned_item')){
+                        prevClonedItem.remove();
+                    }
+
                     if (!_dragEnabled)return;
                     evt.preventDefault();
                     $rootScope.$broadcast('draggable:end', {x: _mx, y: _my, tx: _tx, ty: _ty, event: evt, element: element, data: _data, callback: onDragComplete});
                     element.removeClass('dragging');
+
                     reset();
                     $document.off(_moveEvents, onmove);
                     $document.off(_releaseEvents, onrelease);
 
                 }
                 var onDragComplete = function (evt) {
+
+
+
                     if (!onDragSuccessCallback)return;
 
                     scope.$apply(function () {
