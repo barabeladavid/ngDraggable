@@ -80,13 +80,9 @@ angular.module("ngDraggable", [])
                         $document.on(_moveEvents, cancelPress);
                         $document.on(_releaseEvents, cancelPress);
                     } else {
-                        cancelPress();
-                        _pressTimer = setTimeout(function () {
-                            //cancelPress();
-                            onlongpress(evt);
-                        }, 200);
-                        $document.on(_moveEvents, cancelPress);
-                        $document.on(_releaseEvents, cancelPress);
+
+                        onlongpress(evt);
+
                     }
 
                 }
@@ -99,7 +95,13 @@ angular.module("ngDraggable", [])
                     if (!_dragEnabled)return;
                     evt.preventDefault();
                     element = jQuery(element);
+
+                    var table = document.getElementById('configuration-table');
                     offset = element.offset();
+
+                    var item = element.clone().attr("id", "cloned_item").appendTo(table);
+                    element = item;
+
 
                     element.addClass('dragging');
 
@@ -108,7 +110,7 @@ angular.module("ngDraggable", [])
 
                     startMouseY = _my;
 
-                    var table = document.getElementById('sensor-group-table');
+
 
                     var parentPos = jQuery(table).offset();
                     var childOffset = {
@@ -134,10 +136,6 @@ angular.module("ngDraggable", [])
 
                     _mx = (evt.pageX || evt.originalEvent.touches[0].pageX);
                     _my = (evt.pageY || evt.originalEvent.touches[0].pageY);
-
-                    element = jQuery(element);
-                    offset = element.offset();
-
 
                     var yDiff = startMouseY - _my;
                     _tx = offsetX;
@@ -272,6 +270,8 @@ angular.module("ngDraggable", [])
                 scope.clonedData = {};
                 var initialize = function () {
 
+                    console.debug("clone init");
+
                     img = $(element.find('img'));
                     element.attr('draggable', 'false');
                     img.attr('draggable', 'false');
@@ -314,6 +314,7 @@ angular.module("ngDraggable", [])
                 }
                 var onDragMove = function (evt, obj) {
                     if (_allowClone) {
+                        console.debug("clone drag move:" + obj.ty);
                         moveElement(obj.tx, obj.ty);
                     }
                 }
@@ -325,10 +326,10 @@ angular.module("ngDraggable", [])
                 }
 
                 var reset = function () {
-                    element.css({left: 0, top: 0, position: 'fixed', 'z-index': -1, visibility: 'hidden'});
+                    element.css({left: 0, top: 0, position: 'absolute', 'z-index': -1, visibility: 'hidden'});
                 }
                 var moveElement = function (x, y) {
-                    element.css({left: x, top: y, position: 'fixed', 'z-index': 99999, visibility: 'visible'});
+                    element.css({left: x, top: y, position: 'absolute', 'z-index': 99999, visibility: 'visible'});
                 }
 
                 var absorbEvent_ = function (event) {
