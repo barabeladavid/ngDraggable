@@ -81,6 +81,7 @@ angular.module("ngDraggable", [])
                         $document.on(_releaseEvents, cancelPress);
                     } else {
 
+
                         cancelPress();
                         _pressTimer = setTimeout(function () {
                             cancelPress();
@@ -98,37 +99,50 @@ angular.module("ngDraggable", [])
                     $document.off(_moveEvents, cancelPress);
                     $document.off(_releaseEvents, cancelPress);
                 }
+
+                function calculateDistance(elem, mouseY) {
+                    return mouseY - (elem.offset().top);
+                }
+
                 var onlongpress = function (evt) {
+
                     if (!_dragEnabled)return;
                     evt.preventDefault();
                     element = jQuery(element);
 
-                    var table = document.getElementById('configuration-table');
+                    var table = $('#configuration-table');
+
                     offset = element.offset();
 
-                    var prevClonedItem = document.getElementById('cloned_item');
-                    if (document.getElementById('cloned_item')){
+                    var prevClonedItem = $('#cloned_item');
+                    if (prevClonedItem) {
                         prevClonedItem.remove();
+                        console.debug("prev item is not null");
                     }
 
                     var item = element.clone().attr("id", "cloned_item").appendTo(table);
                     element = item;
 
-
-                    element.addClass('dragging');
-
                     _mx = (evt.pageX || evt.originalEvent.touches[0].pageX);
                     _my = (evt.pageY || evt.originalEvent.touches[0].pageY);
 
+                    element.addClass('dragging');
                     startMouseY = _my;
 
-
-
-                    var parentPos = jQuery(table).offset();
+                    var parentPos = table.offset();
                     var childOffset = {
                         top: offset.top - parentPos.top,
                         left: offset.left - parentPos.left
                     }
+
+                    //childOffset.top = calculateDistance(table, _my) + 15;
+                    if (childOffset.top < 0) {
+                        childOffset.top = calculateDistance(table, _my);
+                    }
+                    if (childOffset.left < 0) {
+                        childOffset.left = 0;
+                    }
+
                     startOffsetY = childOffset.top;
                     offsetX = childOffset.left;
 
@@ -161,7 +175,7 @@ angular.module("ngDraggable", [])
                 var onrelease = function (evt) {
 
                     var prevClonedItem = document.getElementById('cloned_item');
-                    if (document.getElementById('cloned_item')){
+                    if (document.getElementById('cloned_item')) {
                         prevClonedItem.remove();
                     }
 
@@ -176,8 +190,6 @@ angular.module("ngDraggable", [])
 
                 }
                 var onDragComplete = function (evt) {
-
-
 
                     if (!onDragSuccessCallback)return;
 
@@ -230,9 +242,13 @@ angular.module("ngDraggable", [])
                 var onDragStart = function (evt, obj) {
                     if (!_dropEnabled)return;
                     isTouching(obj.x, obj.y, obj.element);
+
+                    console.debug("drag start: " + JSON.stringify(obj.element));
                 }
                 var onDragMove = function (evt, obj) {
                     if (!_dropEnabled)return;
+
+
                     isTouching(obj.x, obj.y, obj.element);
                 }
                 var onDragEnd = function (evt, obj) {
