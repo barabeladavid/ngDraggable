@@ -117,7 +117,6 @@ angular.module("ngDraggable", [])
                     var prevClonedItem = $('#cloned_item');
                     if (prevClonedItem) {
                         prevClonedItem.remove();
-                        console.debug("prev item is not null");
                     }
 
                     var item = element.clone().attr("id", "cloned_item").appendTo(table);
@@ -242,8 +241,6 @@ angular.module("ngDraggable", [])
                 var onDragStart = function (evt, obj) {
                     if (!_dropEnabled)return;
                     isTouching(obj.x, obj.y, obj.element);
-
-                    console.debug("drag start: " + JSON.stringify(obj.element));
                 }
                 var onDragMove = function (evt, obj) {
                     if (!_dropEnabled)return;
@@ -307,9 +304,6 @@ angular.module("ngDraggable", [])
                 var img, _allowClone = true;
                 scope.clonedData = {};
                 var initialize = function () {
-
-                    console.debug("clone init");
-
                     img = $(element.find('img'));
                     element.attr('draggable', 'false');
                     img.attr('draggable', 'false');
@@ -352,7 +346,6 @@ angular.module("ngDraggable", [])
                 }
                 var onDragMove = function (evt, obj) {
                     if (_allowClone) {
-                        console.debug("clone drag move:" + obj.ty);
                         moveElement(obj.tx, obj.ty);
                     }
                 }
